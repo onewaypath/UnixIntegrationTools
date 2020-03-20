@@ -16,7 +16,7 @@
  *** Version Updates ***
  
  v. 1.0.1 Adds the Function "runUnixToScreen" which sends the output to the terminal window (note this should have been v. 1.1.0).
- v. 1.1.1 Bug fix -- makes "runUnixToScreen" function public.
+ v. 1.1.2 Bug fix -- makes "runUnixToScreen" function public.
  
  */
 
@@ -77,7 +77,7 @@ public struct unixTools {
         
     }
     
-    func runUnixToScreen(_ command: String, commandPath: String = "/bin/", arguments: [String] = []) {
+    public func runUnixToScreen(_ command: String, commandPath: String = "/bin/", arguments: [String] = []) {
         
         // Create a process (was NSTask on swift pre 3.0)
         let task = Process()
