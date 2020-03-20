@@ -5,7 +5,20 @@
 //  Created by Alex Young on 3/18/20.
 //
 
-/* This is a collection of tools that allow developers to run Unix commands from within a swift server-side application. The first function "runUnix" runs a Unix command and returns the result as a variable. The function "runUnixToFile" also runs a Unix command but it sends the output to a file instead of returning it as a variable. The last function is a test function that demonstrates how to use the tools to perform various common Unix functions. */
+/* This is a collection of tools that allow developers to run Unix commands from within a swift server-side application.
+ 
+ The first function "runUnix" runs a Unix command and returns the result as a variable. The function "runUnixToFile" also runs a Unix command but it sends the output to a file instead of returning it as a variable.
+ 
+ 
+ 
+ The last function is a test function that demonstrates how to use the tools to perform various common Unix functions.
+ 
+ *** Version Updates ***
+ 
+ v. 1.0.1 Adds the Function "runUnixToScreen" which sends the output to the terminal window.
+ 
+ */
+
 
 import Foundation
 
@@ -62,7 +75,32 @@ public struct unixTools {
         
         
     }
-
+    
+    func runUnixToScreen(_ command: String, commandPath: String = "/bin/", arguments: [String] = []) {
+        
+        // Create a process (was NSTask on swift pre 3.0)
+        let task = Process()
+        let path = commandPath + command
+        
+        // Set the task parameters
+        task.launchPath = path
+        task.arguments = arguments
+        
+        // Create a Pipe and make the task
+        // put all the output there
+        //let pipe = Pipe()
+        //task.standardOutput = pipe
+        
+        // Launch the task
+        task.launch()
+        
+        // Get the data
+        //let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        //let output = String(data: data, encoding: String.Encoding.utf8)
+        
+        //return (output!)
+        
+    }
     public func test() {
 
         let homeDirectory = "/Users/alexyoung/"
