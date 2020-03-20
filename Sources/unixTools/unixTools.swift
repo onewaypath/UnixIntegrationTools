@@ -15,7 +15,8 @@
  
  *** Version Updates ***
  
- v. 1.0.1 Adds the Function "runUnixToScreen" which sends the output to the terminal window.
+ v. 1.0.1 Adds the Function "runUnixToScreen" which sends the output to the terminal window (note this should have been v. 1.1.0).
+ v. 1.1.1 Bug fix -- makes "runUnixToScreen" function public.
  
  */
 
