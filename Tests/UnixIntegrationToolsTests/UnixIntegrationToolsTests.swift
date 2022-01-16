@@ -1,49 +1,70 @@
 import XCTest
 import class Foundation.Bundle
+import UnixIntegrationTools
 
 final class UnixIntegrationToolTests: XCTestCase {
     
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
-        guard #available(macOS 10.13, *) else {
-            return
-        }
-
-        // Mac Catalyst won't have `Process`, but it is supported for executables.
-        #if !targetEnvironment(macCatalyst)
-
-        let fooBinary = productsDirectory.appendingPathComponent("UnixIntegrationTools")
-
-        let process = Process()
-        process.executableURL = fooBinary
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-
-        XCTAssertEqual(output, "Hello, world!\n")
-        #endif
+    func testWriteRead() {
+        let file = UnixFile(at: "", named: "text.txt")
+        file.write("Hello, World!")
+        let fileContents = file.read()
+        XCTAssertEqual(fileContents, "Hello, World!")
+        file.delete()
     }
     
-
-    /// Returns path to the built products directory.
-    var productsDirectory: URL {
-      #if os(macOS)
-        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
-            return bundle.bundleURL.deletingLastPathComponent()
+    func testDateModified() {
+        let file = UnixFile(at: "", named: "text.txt")
+        file.write("Hello, World!")
+        if let fileDate = file.dateModified() {
+            
+            let now = Date()
+            
+            // confirm year is correct
+            
+            let yearFormatter = DateFormatter()
+            yearFormatter.dateFormat = "yyyy"
+            let nowYear = yearFormatter.string(from: now)
+            let fileYear = yearFormatter.string(from: fileDate)
+            XCTAssertEqual(nowYear, fileYear)
+            
+            // confirm month is correct
+            let calendar = Calendar.current
+            let nowComponents = calendar.dateComponents([.month], from: now)
+            let nowMonth = nowComponents.month
+            let fileComponents = calendar.dateComponents([.month], from: fileDate)
+            let fileMonth = fileComponents.month
+            XCTAssertEqual(nowMonth, fileMonth)
+            
+            // confirm day is correct
+            let nowComponents2 = calendar.dateComponents([.day], from: now)
+            let nowDay = nowComponents2.day
+            let fileComponents2 = calendar.dateComponents([.day], from: fileDate)
+            let fileDay = fileComponents2.day
+            XCTAssertEqual(nowDay, fileDay)
         }
-        fatalError("couldn't find the products directory")
-      #else
-        return Bundle.main.bundleURL
-      #endif
+        
+        file.delete()
     }
+    
+    func testDelete() {
+        let file = UnixFile(at: "", named: "text.txt")
+        file.write("Hello, World!")
+        file.delete()
+        XCTAssertEqual(file.dateModified(), nil)
+    }
+    
+    // ensures that a file can be created at a subdirectory
+    func testMKdir() {
+        
+        let unix = UnixSession()
+        _ = unix.shell("mkdir test")
+        let file = UnixFile(at: "test", named: "text.txt")
+        file.write("Hello, World!")
+        let fileContents = file.read()
+        XCTAssertEqual(fileContents, "Hello, World!")
+        file.delete()
+        _ = unix.shell("rmdir test")
+        
+    }
+    
 }

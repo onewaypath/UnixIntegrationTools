@@ -5,7 +5,7 @@
 //
 // The UnixFile class contains methods that simplify access to a file through the Unix system. It provides methods to create/write, read or delete a file as well as determine the date the file was last modified.
 //
-// The UnixFile class is original work. The "shell" method was copied from https://stackoverflow.com/questions/26971240/how-do-i-run-a-terminal-command-in-a-swift-script-e-g-xcodebuild
+// The UnixFile class is original. The "shell" method was copied from here: https://stackoverflow.com/questions/26971240/how-do-i-run-a-terminal-command-in-a-swift-script-e-g-xcodebuild
 // (c) 2022. All Rights Reserved. One Way Path Group Limited.
 // First version created by Alex Young on 1/15/22.
 
@@ -49,7 +49,7 @@ public final class UnixFile {
     var name : String // the file name
     var path : String // the full unix file path including directory and file name
     
-    init(at directory: String, named fileName: String) {
+    public init(at directory: String, named fileName: String) {
         self.directory = directory
         self.name = fileName
         self.path = self.directory + self.name
@@ -87,12 +87,13 @@ public final class UnixFile {
         
         dateStr = String(dateStr.dropLast())
         guard let dateInt = Int(dateStr) else { //return nill if nothing was returned to the date command. This could happen if there is no file at the given path.
-            print ("the date of the file could not be determined")
+            print ("The date of the file could not be determined")
             return nil
         }
         // convert the date to the swift Date type.
         let epochTime = TimeInterval(dateInt)
         let date = Date(timeIntervalSince1970: epochTime)
+        print("The file was last modified on \(date.description(with: .current))")
         return date
     }
     
